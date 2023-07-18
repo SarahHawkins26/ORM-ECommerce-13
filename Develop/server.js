@@ -4,13 +4,6 @@ const routes = require('./routes');
 const sequelize = require('./config/connection');
 require('dotenv').config();
 
-// const connections = mysql.createConnection ({
-//   host: 'localhost',
-//   user: 'root',
-//   password: process.env.DB_PASSWORD,
-//   database: 'ecommerce_db'
-// })
-
 const app = express();
 const PORT = process.env.PORT || 3001;
 

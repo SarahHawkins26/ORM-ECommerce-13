@@ -8,7 +8,9 @@ router.get("/", async (req, res) => {
     // find all tags
     // be sure to include its associated Product data
     const allTags = await Tag.findAll({
-      include: [{ model: Product, through: ProductTag }],
+      include: [
+        { model: Product, attributes: ["product_name"], through: ProductTag },
+      ],
     });
     res.json(allTags);
   } catch (err) {
@@ -20,10 +22,14 @@ router.get("/:id", async (req, res) => {
   try {
     // find a single tag by its `id`
     // be sure to include its associated Product data
-    const tag = await Tag.create(req.body);
-    res.status(200).json(tag);
+    const tag = await Tag.findByPk(req.params.id, {
+      include: [
+        { model: Product, attributes: ["product_name"], through: ProductTag },
+      ],
+    });
+    res.json(tag);
   } catch (err) {
-    res.status(400).json(err);
+    res.status(500).json(err);
   }
 });
 
@@ -40,10 +46,13 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     // update a tag's name by its `id` value
-    const tag = await Tag.update(req.body, {
-      where: { id: req.params.id },
-    });
-    res.json(tag);
+    await Tag.update(
+      { tag_name: req.body.tag_name },
+      {
+        where: { id: req.params.id },
+      }
+    );
+    res.json({ message: "Tag updated successfully." });
   } catch (err) {
     res.status(400).json(err);
   }
@@ -52,10 +61,10 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     // delete on tag by its `id` value
-    const tag = await Tag.destroy({
+    await Tag.destroy({
       where: { id: req.params.id },
     });
-    res.json(tag);
+    res.json({ message: "Tag deleted successfully" });
   } catch (err) {
     res.status(400).json(err);
   }
